@@ -1,11 +1,11 @@
-// Package database opens the application's *gorm.DB connection.
+// Package database はアプリケーションの *gorm.DB 接続を開く。
 //
-// Laravel comparison: replaces config/database.php + the DB manager Laravel
-// wires up automatically. Schema is owned by migrations/*.sql (run via
-// `make migrate`, see the Laravel template's database/migrations/), not by
-// GORM's AutoMigrate — AutoMigrate is only used in tests (see internal/testutil)
-// against an in-memory SQLite DB, similar to how the Laravel template runs
-// PHPUnit against SQLite instead of the real MySQL service.
+// Laravel比較: config/database.php + Laravel が自動で組み立てる DB マネージャーを
+// 置き換える。スキーマは migrations/*.sql(`make migrate` で実行、Laravel版の
+// database/migrations/ に相当)が管理しており、GORM の AutoMigrate では管理しない
+// — AutoMigrate はテスト(internal/testutil 参照)で in-memory SQLite に対して
+// のみ使う。Laravel版が PHPUnit を本物の MySQL ではなく SQLite に対して実行する
+// のと同じ理由。
 package database
 
 import (

@@ -1,9 +1,9 @@
 // Command seed populates the database with sample data.
 //
-// Laravel comparison: the equivalent of `php artisan db:seed` /
-// database/seeders/DatabaseSeeder.php. Just like that file ships as a thin
-// placeholder rather than real fixtures, this only inserts a couple of
-// sample tasks — replace it once real Features exist.
+// Laravel比較: `php artisan db:seed` / database/seeders/DatabaseSeeder.php に
+// 相当する。あちらが本物のフィクスチャではなく薄いプレースホルダーとして
+// 存在するのと同じく、こちらもサンプルタスクを数件挿入するだけ — 実際の
+// Feature ができたら置き換えること。
 package main
 
 import (

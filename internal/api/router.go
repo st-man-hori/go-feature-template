@@ -1,6 +1,6 @@
-// Package api assembles the chi.Mux the whole application serves: global
-// middleware, the health check, Swagger UI, and every Feature's routes
-// mounted under /api.
+// Package api は、アプリケーション全体が使う chi.Mux を組み立てる:
+// グローバルミドルウェア、ヘルスチェック、Swagger UI、そして各 Feature の
+// ルートを /api 配下にマウントする。
 package api
 
 import (
@@ -15,15 +15,14 @@ import (
 	"github.com/st-man-hori/go-feature-template/internal/features/task"
 )
 
-// NewRouter wires up the whole HTTP layer.
+// NewRouter は HTTP 層全体を組み立てる。
 //
-// Laravel comparison: this plays the role of bootstrap/app.php's
-// withRouting()/withMiddleware() plus routes/api.php. There's no separate
-// "web" vs "api" middleware group because this template is API-only, and
-// ForceJsonRequest/CamelCaseJsonResponse have no Go equivalent here:
-// handlers only ever write JSON, and `json` struct tags already control
-// field casing on the wire, so there's no framework-level snake_case to
-// translate after the fact.
+// Laravel比較: bootstrap/app.php の withRouting()/withMiddleware() と
+// routes/api.php を合わせた役割を果たす。この template は API 専用なので
+// "web" と "api" のミドルウェアグループを分ける必要が無く、また
+// ForceJsonRequest/CamelCaseJsonResponse に対応する Go 側の仕組みも無い:
+// Handler は最初から JSON しか書かないし、`json` 構造体タグがそのまま wire 上の
+// キーになるので、後からフレームワーク側で snake_case を変換する層が要らない。
 func NewRouter(db *gorm.DB) *chi.Mux {
 	r := chi.NewRouter()
 
@@ -31,7 +30,7 @@ func NewRouter(db *gorm.DB) *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// Mirrors Laravel's `health: '/up'` routing option.
+	// Laravel の `health: '/up'` ルーティングオプションに相当。
 	r.Get("/up", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})

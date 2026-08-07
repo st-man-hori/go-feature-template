@@ -10,11 +10,11 @@ import (
 	"github.com/st-man-hori/go-feature-template/internal/models"
 )
 
-// UseCase holds the Task feature's business logic — the equivalent of the
-// classes under Laravel's UseCases/, one execute() each. Following the same
-// rule the Laravel template states explicitly ("no Repository pattern —
-// UseCases talk to Eloquent directly"), UseCase here talks to *gorm.DB
-// directly instead of going through a repository interface.
+// UseCase は Task Feature のビジネスロジックを持つ — Laravel の UseCases/
+// 配下にある、execute() を1つずつ持つクラス群に相当する。Laravel版が明示的に
+// 掲げているのと同じルール(「Repository パターンは使わない — UseCase から
+// Eloquent を直接操作する」)に従い、ここでも UseCase は Repository の
+// インターフェースを介さず *gorm.DB を直接操作する。
 type UseCase struct {
 	db *gorm.DB
 }
@@ -50,7 +50,7 @@ func (uc *UseCase) Store(req StoreTaskRequest) (models.Task, error) {
 	if req.DueDate != nil {
 		d, err := time.Parse("2006-01-02", *req.DueDate)
 		if err != nil {
-			return models.Task{}, err // unreachable: StoreTaskRequest already validated the format
+			return models.Task{}, err // unreachable: StoreTaskRequestで既に形式を検証済み
 		}
 		task.DueDate = &d
 	}
@@ -82,7 +82,7 @@ func (uc *UseCase) Update(id uint, req UpdateTaskRequest) (models.Task, error) {
 		} else {
 			d, err := time.Parse("2006-01-02", *req.DueDate.Value)
 			if err != nil {
-				return models.Task{}, err // unreachable: UpdateTaskRequest.Validate already checked the format
+				return models.Task{}, err // unreachable: UpdateTaskRequest.Validateで既に形式を検証済み
 			}
 			task.DueDate = &d
 		}

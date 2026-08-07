@@ -1,9 +1,9 @@
 package httpx
 
-// ErrorResponse and ValidationErrorResponse document the JSON shapes
-// Error() writes at runtime. They exist only so swaggo's @Failure
-// annotations have a concrete type to point at; handlers never construct
-// them directly (Error() builds the map inline instead).
+// ErrorResponse と ValidationErrorResponse は、Error() が実行時に書き込む
+// JSON の形を表現するための型。存在意義は、swaggo の @Failure アノテーションが
+// 指す先として具象型が必要なことだけで、Handler がこれらを直接構築することは
+// ない(Error() はその場で map を組み立てている)。
 type ErrorResponse struct {
 	Error struct {
 		Code    string `json:"code" example:"not_found"`

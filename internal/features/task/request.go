@@ -1,9 +1,10 @@
-// Package task is the Task feature: everything needed to serve /api/tasks
-// lives in this directory, one file per Laravel-side concern (Controller ->
-// handler.go, Requests+Inputs -> request.go, Resources -> response.go,
-// UseCases -> usecase.go). Copy this package as a starting point for a new
-// Feature, then delete it once your first real Feature exists — exactly
-// like the Laravel template's app/Features/Task/.
+// task パッケージは Task Feature そのもの: /api/tasks を提供するのに必要な
+// ものはすべてこのディレクトリに入っている。Laravel側の関心ごとに1ファイル
+// (Controller -> handler.go、Requests+Inputs -> request.go、
+// Resources -> response.go、UseCases -> usecase.go)という対応関係。
+// 新しい Feature を作るときはこのパッケージをコピーして出発点にし、最初の
+// 本物の Feature ができたら削除する — Laravel版の app/Features/Task/ と
+// まったく同じ使い方。
 package task
 
 import (
@@ -17,11 +18,11 @@ import (
 
 // --- Index -------------------------------------------------------------
 
-// IndexTaskRequest mirrors Requests/IndexTaskRequest.php + Inputs/IndexTaskInput.php.
-// Laravel's FormRequest reads query params via $this->boolean()/$this->integer()
-// inside toInput(); Go has no automatic query-string binding, so this
-// template parses the two fields by hand rather than pulling in a
-// reflection-based query decoder for a single endpoint.
+// IndexTaskRequest は Requests/IndexTaskRequest.php + Inputs/IndexTaskInput.php に
+// 相当する。Laravel の FormRequest は toInput() の中で $this->boolean()/
+// $this->integer() を使ってクエリパラメータを読むが、Go には自動的な
+// クエリ文字列バインディングが無いため、この template ではたった2フィールドの
+// ために reflection ベースのクエリデコーダーを持ち込まず、手で解析している。
 type IndexTaskRequest struct {
 	IsDone  *bool
 	PerPage int
@@ -55,11 +56,11 @@ func NewIndexTaskRequest(query url.Values) (IndexTaskRequest, error) {
 
 // --- Store ---------------------------------------------------------------
 
-// StoreTaskRequest mirrors Requests/StoreTaskRequest.php + Inputs/StoreTaskInput.php
-// merged into one type: a Go struct with `json` + `validate` tags already
-// works as both the validated request shape and the UseCase input, so there
-// is no separate Input DTO layer (see request.go's package doc for why
-// Laravel needs one and Go doesn't).
+// StoreTaskRequest は Requests/StoreTaskRequest.php + Inputs/StoreTaskInput.php を
+// 1つの型に統合したもの: `json` + `validate` タグを持つ Go の構造体は、
+// バリデーション済みのリクエストの形と UseCase への入力の両方をそのまま
+// 兼ねられるので、別レイヤーの Input DTO が要らない(Laravel がなぜそれを
+// 必要とし Go がなぜ不要かは、このファイル冒頭のパッケージ doc を参照)。
 type StoreTaskRequest struct {
 	Title       string  `json:"title" validate:"required,max=255"`
 	Description *string `json:"description" validate:"omitempty"`
@@ -68,9 +69,10 @@ type StoreTaskRequest struct {
 
 // --- Update ----------------------------------------------------------------
 
-// UpdateTaskRequest mirrors Requests/UpdateTaskRequest.php + Inputs/UpdateTaskInput.php.
-// Every field uses Field[T] (field.go) instead of a plain pointer so a PATCH
-// request can tell "omitted" apart from "explicitly set to null".
+// UpdateTaskRequest は Requests/UpdateTaskRequest.php + Inputs/UpdateTaskInput.php に
+// 相当する。すべてのフィールドはただのポインタではなく Field[T](field.go)を
+// 使っており、これにより PATCH リクエストで「省略された」のか「明示的に null に
+// 指定された」のかを区別できる。
 type UpdateTaskRequest struct {
 	Title       Field[string]  `json:"title"`
 	Description Field[*string] `json:"description"`
@@ -78,11 +80,12 @@ type UpdateTaskRequest struct {
 	IsDone      Field[bool]    `json:"isDone"`
 }
 
-// Validate hand-rolls the equivalent of UpdateTaskRequest::rules(): only
-// fields that were actually Set get checked, matching Laravel's `sometimes`
-// rule. go-playground/validator's struct tags don't reach into a generic
-// Field[T]'s inner Value cleanly, so this template validates Update by hand
-// rather than fighting the reflection-based validator for one endpoint.
+// Validate は UpdateTaskRequest::rules() 相当のものを手書きしたもの: 実際に
+// Set されたフィールドだけをチェックし、Laravel の `sometimes` ルールと同じ
+// 挙動になる。go-playground/validator の構造体タグはジェネリクスの Field[T] の
+// 内側の Value まできれいには届かないため、この template ではたった1エンドポイント
+// のために reflection ベースの validator と格闘するのではなく、Update だけは
+// 手動でバリデーションしている。
 func (r UpdateTaskRequest) Validate() error {
 	errs := map[string][]string{}
 

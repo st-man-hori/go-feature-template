@@ -1,7 +1,7 @@
-// Package models holds GORM model structs shared across features — the
-// equivalent of Laravel's app/Models/. Model definitions and table schema
-// don't belong to any single Feature, so like the Laravel template, Task
-// lives here instead of inside internal/features/task/.
+// Package models は、複数の Feature にまたがって共有される GORM モデルの構造体を
+// 保持する — Laravel の app/Models/ に相当する。モデル定義とテーブルスキーマは
+// 特定の Feature に属するものではないため、Laravel版と同じく Task は
+// internal/features/task/ の中ではなくここに置く。
 package models
 
 import "time"

@@ -6,10 +6,10 @@ import (
 	"github.com/st-man-hori/go-feature-template/internal/models"
 )
 
-// TaskResponse mirrors Resources/TaskResource.php: the single place that
-// decides the API's on-the-wire shape for a Task, decoupled from the GORM
-// model's column names/types (e.g. a nil DueDate becomes a JSON null, not
-// an omitted key, matching Laravel's `$this->resource->due_date?->toDateString()`).
+// TaskResponse は Resources/TaskResource.php に相当する: Task の API 上での
+// 形を決める唯一の場所であり、GORM モデルのカラム名/型からは切り離されている
+// (例えば DueDate が nil のときは、キーが省略されるのではなく JSON の null に
+// なる。Laravel の `$this->resource->due_date?->toDateString()` と同じ挙動)。
 type TaskResponse struct {
 	ID          uint    `json:"id" example:"1"`
 	Title       string  `json:"title" example:"Write the quarterly report"`
@@ -20,10 +20,10 @@ type TaskResponse struct {
 	UpdatedAt   string  `json:"updatedAt" example:"2026-07-17T00:00:00Z"`
 }
 
-// TaskDataResponse and TaskListDataResponse document the {"data": ...}
-// envelope httpx.Data() builds at runtime. They exist only so swaggo's
-// @Success annotations in handler.go have a concrete type to point at —
-// handlers never construct these directly.
+// TaskDataResponse と TaskListDataResponse は、httpx.Data() が実行時に組み立てる
+// {"data": ...} エンベロープを表現するためだけの型。存在意義は、
+// handler.go の swaggo の @Success アノテーションが指す先として具象型が
+// 必要なことだけで、Handler がこれらを直接構築することはない。
 type TaskDataResponse struct {
 	Data TaskResponse `json:"data"`
 }

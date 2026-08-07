@@ -16,9 +16,9 @@ var validate = newValidator()
 func newValidator() *validator.Validate {
 	v := validator.New(validator.WithRequiredStructEnabled())
 
-	// Report validation errors using each field's `json` tag (e.g. "dueDate")
-	// instead of its Go field name ("DueDate"), so error responses match the
-	// camelCase the API accepts and returns.
+	// バリデーションエラーは Go のフィールド名("DueDate")ではなく、各フィールドの
+	// `json` タグ(例: "dueDate")を使って報告する。これにより、エラーレスポンスが
+	// API が受け取り・返す camelCase と一致する。
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 		if name == "-" {
@@ -30,9 +30,9 @@ func newValidator() *validator.Validate {
 	return v
 }
 
-// ValidationError is returned by Decode when the request body fails
-// validation. httpx.Error renders it as Laravel's default 422 shape:
-// {"message": ..., "errors": {field: [msg, ...]}}.
+// ValidationError は、リクエストボディがバリデーションに失敗したときに Decode が
+// 返す。httpx.Error はこれを Laravel のデフォルトの 422 形式
+// {"message": ..., "errors": {field: [msg, ...]}} でレンダリングする。
 type ValidationError struct {
 	Errors map[string][]string
 }
@@ -41,16 +41,16 @@ func (e *ValidationError) Error() string {
 	return "validation failed"
 }
 
-// Decode reads a JSON body into dst, then validates it against dst's
-// `validate` struct tags.
+// Decode は JSON ボディを dst に読み込み、dst の `validate` 構造体タグに従って
+// バリデーションする。
 //
-// Laravel comparison: this collapses FormRequest::rules() +
-// Data::from($request->validated()) into one step. A Laravel FormRequest is
-// split from its Input DTO because the FormRequest is tied to
-// Illuminate\Http\Request (it needs authorize(), $this->boolean(), etc.)
-// while the Input DTO is plain data passed to the UseCase. In Go, a plain
-// struct with `json` + `validate` tags already serves both roles, so each
-// Task request type in this template plays both parts at once.
+// Laravel比較: これは FormRequest::rules() + Data::from($request->validated())
+// を1ステップにまとめたもの。Laravel の FormRequest が Input DTO と分かれて
+// いるのは、FormRequest が Illuminate\Http\Request に紐づいている
+// (authorize() や $this->boolean() などが必要)一方、Input DTO は UseCase に
+// 渡すただのデータだからである。Go では `json` + `validate` タグを持つただの
+// 構造体がその両方の役割を兼ねられるため、この template の各 Task リクエスト型は
+// 両方の役割を1つで担っている。
 func Decode(r *http.Request, dst any) error {
 	if err := DecodeJSON(r, dst); err != nil {
 		return err
@@ -58,9 +58,9 @@ func Decode(r *http.Request, dst any) error {
 	return Validate(dst)
 }
 
-// DecodeJSON reads a JSON body into dst without running struct-tag
-// validation, for requests (like Update) that validate by hand instead —
-// see UpdateTaskRequest.Validate for why.
+// DecodeJSON は構造体タグによるバリデーションを行わずに JSON ボディを dst に
+// 読み込む。Update のように手動でバリデーションするリクエスト向け
+// — 理由は UpdateTaskRequest.Validate を参照。
 func DecodeJSON(r *http.Request, dst any) error {
 	if r.Body == nil {
 		return &ValidationError{Errors: map[string][]string{"body": {"request body is required"}}}
@@ -76,8 +76,8 @@ func DecodeJSON(r *http.Request, dst any) error {
 	return nil
 }
 
-// Validate runs struct-tag validation without decoding a body first, for
-// requests (like Index) whose input comes from query parameters instead.
+// Validate はボディのデコードを行わず、構造体タグによるバリデーションだけを
+// 実行する。Index のように、入力がクエリパラメータから来るリクエスト向け。
 func Validate(dst any) error {
 	if err := validate.Struct(dst); err != nil {
 		return toValidationError(err)

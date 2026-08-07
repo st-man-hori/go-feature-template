@@ -23,10 +23,11 @@ jobs:
       - name: Static analysis (golangci-lint)
         uses: golangci/golangci-lint-action@v7
         with:
-          # Pinned instead of "latest": golangci-lint's own binary must be
-          # built with a Go toolchain >= this repo's go.mod `go` directive,
-          # and "latest" has resolved to older prebuilt binaries that fail
-          # that check. Bump this alongside go.mod's Go version.
+          # "latest" ではなく固定バージョンを指定している: golangci-lint 自身の
+          # バイナリは、このリポジトリの go.mod の `go` ディレクティブ以上の
+          # Go ツールチェーンでビルドされている必要があるが、"latest" が
+          # それより古いビルド済みバイナリを解決してしまいチェックに落ちたため。
+          # go.mod の Go バージョンを上げるときはこちらも合わせて上げること。
           version: v2.12.2
 
       - name: Run tests

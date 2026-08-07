@@ -1,11 +1,10 @@
 // Command api starts the HTTP server.
 //
-// Laravel comparison: this is the equivalent of `php artisan serve` in dev,
-// and of the nginx + php-fpm pair the Laravel template's compose.yaml runs
-// in "prod-like" local mode. Go has no separate dev-server command — a
-// compiled binary *is* the server — which is also why this template's
-// compose.yaml needs only one app service instead of Laravel's app+nginx
-// split.
+// Laravel比較: 開発時の `php artisan serve` や、Laravel版の compose.yaml が
+// 本番相当のローカルモードで動かす nginx + php-fpm の組み合わせに相当する。
+// Go には別建ての開発サーバーコマンドが存在しない — コンパイル済みバイナリ
+// そのものがサーバーになるため、この template の compose.yaml が Laravel の
+// app+nginx 構成と違い app サービス1つで済むのもそれが理由。
 //
 //	@title			Go Feature Template API
 //	@version		1.0

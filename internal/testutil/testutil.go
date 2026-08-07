@@ -1,12 +1,11 @@
-// Package testutil provides test-only helpers for spinning up the HTTP
-// layer against an in-memory SQLite database.
+// Package testutil は、in-memory SQLite データベースに対して HTTP 層を
+// 立ち上げるテスト専用のヘルパーを提供する。
 //
-// Laravel comparison: this is the Go equivalent of the Laravel template's
-// phpunit.xml pointing RefreshDatabase at SQLite instead of the real MySQL
-// service, so feature tests run fast with no Docker dependency. Production
-// schema is owned by migrations/*.sql (MySQL-specific SQL), so tests use
-// GORM's AutoMigrate against the model structs instead of replaying those
-// migrations under a different SQL dialect.
+// Laravel比較: Laravel版の phpunit.xml が RefreshDatabase を本物の MySQL では
+// なく SQLite に向けているのと同じ狙いの Go 版で、Feature テストを Docker 無しで
+// 高速に実行できる。本番のスキーマは migrations/*.sql(MySQL 専用の SQL)が
+// 管理しているため、テストはそれらのマイグレーションを別の SQL 方言で再生する
+// のではなく、モデル構造体からの GORM の AutoMigrate を使う。
 package testutil
 
 import (
@@ -21,11 +20,11 @@ import (
 	"github.com/st-man-hori/go-feature-template/internal/models"
 )
 
-// NewDB opens a fresh, isolated in-memory SQLite database for one test and
-// migrates it from the GORM model structs. SQLite's :memory: mode creates a
-// brand-new empty database per connection, so the pool is pinned to a
-// single connection — otherwise a second connection opened mid-test would
-// see an empty, unmigrated database.
+// NewDB は1テストごとに独立した in-memory SQLite データベースを新規に開き、
+// GORM のモデル構造体からマイグレーションする。SQLite の :memory: モードは
+// 接続ごとにまっさらな新しいデータベースを作るため、コネクションプールを
+// 1本に固定している — そうしないと、テスト途中で開かれた2本目のコネクションが
+// 空の未マイグレーション状態のデータベースを見てしまう。
 func NewDB(t *testing.T) *gorm.DB {
 	t.Helper()
 
@@ -49,10 +48,10 @@ func NewDB(t *testing.T) *gorm.DB {
 	return db
 }
 
-// NewRouter builds a chi.Mux with every route the app mounts under /api,
-// backed by db. It mirrors internal/api.NewRouter's route table without
-// that package's logging/Swagger middleware, which would just add noise to
-// test output.
+// NewRouter は、アプリが /api 配下にマウントする全ルートを持つ chi.Mux を
+// db を使って組み立てる。internal/api.NewRouter のルート構成をそのまま
+// 踏襲しつつ、ログや Swagger のミドルウェアは含めない — テスト出力の
+// ノイズになるだけなので。
 func NewRouter(db *gorm.DB) *chi.Mux {
 	r := chi.NewRouter()
 

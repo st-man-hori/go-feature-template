@@ -10,9 +10,9 @@ import (
 	"github.com/st-man-hori/go-feature-template/internal/httpx"
 )
 
-// Handler is the equivalent of Laravel's TaskController: a thin layer that
-// decodes/validates the request, calls the UseCase, and shapes the
-// response. One method = one action, same as the Laravel template.
+// Handler は Laravel の TaskController に相当する: リクエストのデコード/
+// バリデーションを行い、UseCase を呼び出し、レスポンスの形を整えるだけの
+// 薄いレイヤー。1メソッド = 1アクションという点も Laravel版と同じ。
 type Handler struct {
 	uc *UseCase
 }
@@ -21,7 +21,7 @@ func NewHandler(uc *UseCase) *Handler {
 	return &Handler{uc: uc}
 }
 
-// Index lists tasks, optionally filtered by completion status.
+// Index はタスク一覧を返す。完了状態でのフィルタも可能。
 //
 //	@Summary	List tasks
 //	@Tags		tasks
@@ -47,7 +47,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	httpx.Data(w, http.StatusOK, toTaskResponses(tasks))
 }
 
-// Show returns a single task by id.
+// Show は id を指定して単一のタスクを返す。
 //
 //	@Summary	Get a task
 //	@Tags		tasks
@@ -72,7 +72,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	httpx.Data(w, http.StatusOK, toTaskResponse(task))
 }
 
-// Store creates a new task.
+// Store は新しいタスクを作成する。
 //
 //	@Summary	Create a task
 //	@Tags		tasks
@@ -98,7 +98,7 @@ func (h *Handler) Store(w http.ResponseWriter, r *http.Request) {
 	httpx.Data(w, http.StatusCreated, toTaskResponse(task))
 }
 
-// Update partially updates a task; omitted fields are left unchanged.
+// Update はタスクを部分更新する。省略されたフィールドは変更しない。
 //
 //	@Summary	Update a task
 //	@Tags		tasks
@@ -136,7 +136,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	httpx.Data(w, http.StatusOK, toTaskResponse(task))
 }
 
-// Destroy deletes a task.
+// Destroy はタスクを削除する。
 //
 //	@Summary	Delete a task
 //	@Tags		tasks

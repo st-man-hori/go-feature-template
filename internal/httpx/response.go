@@ -1,12 +1,13 @@
-// Package httpx holds small HTTP helpers shared by every feature's handler:
-// JSON encoding/decoding, the {"data": ...} envelope, and error rendering.
+// Package httpx は、各 Feature の Handler が共通して使う小さな HTTP ヘルパーを
+// まとめたもの: JSON のエンコード/デコード、{"data": ...} エンベロープ、
+// エラーレンダリング。
 //
-// Laravel comparison: together with request.go, this package plays the role
-// of JsonResource's response(), Illuminate\Http\JsonResponse, and the
-// App\Shared\Responses\ApiErrorResponse + AppDomainException rendering wired
-// up in bootstrap/app.php's withExceptions(). It's a package, not a
-// framework hook, because Go has no equivalent to Laravel's exception
-// renderer pipeline — handlers call httpx.Error(w, err) explicitly instead.
+// Laravel比較: request.go と合わせて、JsonResource の response()、
+// Illuminate\Http\JsonResponse、そして bootstrap/app.php の withExceptions() で
+// 組み込まれる App\Shared\Responses\ApiErrorResponse + AppDomainException の
+// レンダリングを合わせた役割を果たす。フレームワークのフックではなくただの
+// パッケージなのは、Go には Laravel の例外レンダラーパイプラインに相当するものが
+// 無く、Handler が明示的に httpx.Error(w, err) を呼ぶ形になるため。
 package httpx
 
 import (
@@ -18,7 +19,7 @@ import (
 	"github.com/st-man-hori/go-feature-template/internal/apperror"
 )
 
-// JSON writes v as a JSON body with the given status code.
+// JSON は v を、指定したステータスコードで JSON ボディとして書き込む。
 func JSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
@@ -28,22 +29,22 @@ func JSON(w http.ResponseWriter, status int, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 
-// Data wraps v in {"data": v}, mirroring the envelope Laravel's JsonResource
-// and AnonymousResourceCollection produce automatically.
+// Data は v を {"data": v} でラップする。Laravel の JsonResource や
+// AnonymousResourceCollection が自動的に作るエンベロープと同じ形。
 func Data(w http.ResponseWriter, status int, v any) {
 	JSON(w, status, map[string]any{"data": v})
 }
 
-// NoContent writes an empty 204, mirroring TaskController::destroy().
+// NoContent は空の 204 を書き込む。TaskController::destroy() と同じ挙動。
 func NoContent(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Error renders err as a JSON error response. The status code depends on
-// the error's type:
-//   - *apperror.AppError  -> its own HTTPStatus (e.g. 404 for NotFound)
-//   - *ValidationError    -> 422, in Laravel's default validation-error shape
-//   - anything else       -> 500, with the real error logged but not exposed
+// Error は err を JSON エラーレスポンスとしてレンダリングする。ステータスコードは
+// err の型によって決まる:
+//   - *apperror.AppError  -> 自身が持つ HTTPStatus(例: NotFound なら 404)
+//   - *ValidationError    -> 422。Laravel のデフォルトのバリデーションエラー形式
+//   - それ以外            -> 500。実際のエラーはログに出すがレスポンスには出さない
 func Error(w http.ResponseWriter, err error) {
 	var appErr *apperror.AppError
 	if errors.As(err, &appErr) {
