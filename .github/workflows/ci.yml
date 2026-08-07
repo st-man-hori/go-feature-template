@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
           cache: true
@@ -21,7 +21,7 @@ jobs:
         run: test -z "$(gofmt -l .)"
 
       - name: Static analysis (golangci-lint)
-        uses: golangci/golangci-lint-action@v7
+        uses: golangci/golangci-lint-action@v9
         with:
           # "latest" ではなく固定バージョンを指定している: golangci-lint 自身の
           # バイナリは、このリポジトリの go.mod の `go` ディレクティブ以上の
