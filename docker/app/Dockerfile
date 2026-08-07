@@ -10,6 +10,12 @@ WORKDIR /app
 # binaries installed straight into the image instead of vendored via a
 # package manager.
 FROM base AS local
+# The app source is bind-mounted from the host at runtime (see compose.yaml),
+# including .git — which `go build` normally reads to stamp VCS info, but the
+# container's root user doesn't own that host-mounted .git, so git refuses it
+# ("detected dubious ownership") and the build fails outright. Skip VCS
+# stamping in local dev instead of fighting git's ownership check.
+ENV GOFLAGS=-buildvcs=false
 RUN go install github.com/air-verse/air@v1.61.1 && \
     go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest && \
     go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest && \
