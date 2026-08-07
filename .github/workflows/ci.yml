@@ -21,7 +21,7 @@ jobs:
         run: test -z "$(gofmt -l .)"
 
       - name: Static analysis (golangci-lint)
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
           # Pinned instead of "latest": golangci-lint's own binary must be
           # built with a Go toolchain >= this repo's go.mod `go` directive,
