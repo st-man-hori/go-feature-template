@@ -19,13 +19,12 @@ linters:
         # mechanical comment on every exported symbol.
         - name: exported
           disabled: true
+  exclusions:
+    paths:
+      - docs
+      - tmp
 
 formatters:
   enable:
     - gofmt
     - goimports
-
-issues:
-  exclude-dirs:
-    - docs
-    - tmp
