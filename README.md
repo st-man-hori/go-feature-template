@@ -117,7 +117,7 @@ Go を体系的に学ぶための比較用に、Laravel 版の各要素が Go �
 
 | Laravel (`laravel-feature-template`) | Go (`go-feature-template`) | 補足 |
 | --- | --- | --- |
-| `routes/api.php` で一元管理 | `internal/features/task/routes.go` | Go 版はルートも Feature ディレクトリの中に置く。何かを探すのに Feature の外を見る必要がない |
+| `routes/api.php` で一元管理 | `internal/features/task/routes.go` | これは言語/フレームワークの制約ではなく template ごとの設計判断。Laravel でも `app/Features/Task/routes.php` を作って `routes/api.php` から読み込む分散スタイルは可能(`nwidart/laravel-modules` 等が採用)。Go 版は package by feature を徹底するためあえてルートを Feature ディレクトリの中に置いた |
 | `TaskController`(Controller) | `Handler`(`handler.go`) | 薄いレイヤという役割は同じ |
 | `FormRequest` + `Inputs/`(spatie/laravel-data の `Optional`) | `Request` 構造体(`json` + `validate` タグ) | FormRequest は `Illuminate\Http\Request` に紐づくため Input DTO と分かれているが、Go の構造体はもともと transport 非依存なので1つの型に統合できる |
 | PATCH の「未指定」と「明示的な null」を区別する `Optional` | ジェネリクスの `Field[T]`(`field.go`) | `encoding/json` は JSON に存在しないキーの `UnmarshalJSON` を呼ばないことを利用して同じ問題を解いている |
