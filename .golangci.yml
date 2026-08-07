@@ -1,0 +1,31 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - revive
+  settings:
+    revive:
+      rules:
+        # This template favors comments only where the WHY is non-obvious
+        # (see doc comments on packages/exported types throughout), not a
+        # mechanical comment on every exported symbol.
+        - name: exported
+          disabled: true
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+issues:
+  exclude-dirs:
+    - docs
+    - tmp
