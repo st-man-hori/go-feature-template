@@ -38,7 +38,9 @@ Laravel 版と同じく、技術的な層(Controller / Service / Repository 等)
     ├── models/                   # GORM モデル(2つ以上の Feature から参照される)
     ├── apperror/                 # ドメインエラー型
     ├── httpx/                    # JSON エンコード/デコード・バリデーション・エラーレンダリング
-    ├── api/router.go             # ルーター組み立て(ミドルウェア + 各 Feature のマウント)
+    ├── api/
+    │   ├── router.go             # ルーター組み立て(ミドルウェア・ヘルスチェック・Swagger UI)
+    │   └── routes.go             # 全 Feature のルート一元登録(routes/api.php 相当)
     ├── config/                   # 環境変数の読み込み
     ├── database/                 # *gorm.DB の初期化
     └── testutil/                 # テスト用の in-memory DB・ルーター構築
@@ -46,12 +48,11 @@ Laravel 版と同じく、技術的な層(Controller / Service / Repository 等)
 
 ## Package by Feature の規約
 
-1機能につき `internal/features/{feature}/` を1パッケージ作り、その機能に関するものは原則すべてそのディレクトリの中に閉じ込めます。
+1機能につき `internal/features/{feature}/` を1パッケージ作り、その機能に関するものは原則すべてそのディレクトリの中に閉じ込めます。ただし **ルーティングとマイグレーションは例外** で、`internal/api/routes.go` と `migrations/` に一元管理します(Laravel 版が Controller 等は `app/Features/{Feature}/` に閉じ込めつつ、`routes/api.php` と `database/migrations/` だけは一元管理しているのと同じ方針)。
 
 ```
 internal/features/{feature}/
 ├── handler.go     # 薄い Handler。1メソッド = 1アクション(Controller 相当)
-├── routes.go      # そのFeatureのルート登録
 ├── request.go     # リクエストの型 + バリデーション(FormRequest + Input DTO 相当)
 ├── response.go     # レスポンスの型と変換関数(Resource 相当)
 └── usecase.go      # ビジネスロジック本体
@@ -64,7 +65,7 @@ internal/features/{feature}/
 - Repository パターンは使わない。UseCase から `*gorm.DB` を直接操作する(Laravel 版が Eloquent を直接叩くのと同じ方針)。
 - ドメイン固有のエラーは `internal/apperror.AppError` を使う。`internal/httpx.Error()` が code/message/status から一貫した JSON エラーレスポンスに変換する。
 - 「god Service」は作らない。複数 Feature にまたがる共通処理が本当に必要になったときだけ `internal/shared/` のようなパッケージを切り出す。
-- DI コンテナは使わない。`main.go` / `router.go` で `task.NewHandler(task.NewUseCase(db))` のように手で組み立てる(下記「Laravel との対応」参照)。
+- DI コンテナは使わない。`main.go` / `internal/api/routes.go` で `task.NewHandler(task.NewUseCase(db))` のように手で組み立てる(下記「Laravel との対応」参照)。
 
 新しい Feature を追加するときは `internal/features/task/` をコピーしてリネームするのが一番早い方法です。
 
@@ -117,7 +118,8 @@ Go を体系的に学ぶための比較用に、Laravel 版の各要素が Go �
 
 | Laravel (`laravel-feature-template`) | Go (`go-feature-template`) | 補足 |
 | --- | --- | --- |
-| `routes/api.php` で一元管理 | `internal/features/task/routes.go` | これは言語/フレームワークの制約ではなく template ごとの設計判断。Laravel でも `app/Features/Task/routes.php` を作って `routes/api.php` から読み込む分散スタイルは可能(`nwidart/laravel-modules` 等が採用)。Go 版は package by feature を徹底するためあえてルートを Feature ディレクトリの中に置いた |
+| `bootstrap/app.php`(ミドルウェア設定・ルーティングの配線) | `internal/api/router.go` | どちらも「何を挟むか・どこにマウントするか」の配線担当で、具体的なエンドポイント一覧は持たない |
+| `routes/api.php`(エンドポイント一覧そのもの) | `internal/api/routes.go` | Laravel 版が Controller 等は Feature ディレクトリに閉じ込めつつルーティングだけ一元管理しているのと同じ方針を踏襲。ちなみにこれは言語の制約ではなく設計判断で、Laravel 側も `app/Features/Task/routes.php` を作って読み込む分散スタイルにできる(`nwidart/laravel-modules` 等が採用) |
 | `TaskController`(Controller) | `Handler`(`handler.go`) | 薄いレイヤという役割は同じ |
 | `FormRequest` + `Inputs/`(spatie/laravel-data の `Optional`) | `Request` 構造体(`json` + `validate` タグ) | FormRequest は `Illuminate\Http\Request` に紐づくため Input DTO と分かれているが、Go の構造体はもともと transport 非依存なので1つの型に統合できる |
 | PATCH の「未指定」と「明示的な null」を区別する `Optional` | ジェネリクスの `Field[T]`(`field.go`) | `encoding/json` は JSON に存在しないキーの `UnmarshalJSON` を呼ばないことを利用して同じ問題を解いている |

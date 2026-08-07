@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/st-man-hori/go-feature-template/internal/features/task"
+	"github.com/st-man-hori/go-feature-template/internal/api"
 	"github.com/st-man-hori/go-feature-template/internal/models"
 )
 
@@ -48,16 +48,15 @@ func NewDB(t *testing.T) *gorm.DB {
 	return db
 }
 
-// NewRouter は、アプリが /api 配下にマウントする全ルートを持つ chi.Mux を
-// db を使って組み立てる。internal/api.NewRouter のルート構成をそのまま
-// 踏襲しつつ、ログや Swagger のミドルウェアは含めない — テスト出力の
-// ノイズになるだけなので。
+// NewRouter は internal/api.RegisterRoutes をそのまま使って /api 配下の
+// 全ルートを持つ chi.Mux を db から組み立てる。internal/api.NewRouter と
+// ルート表を共有しつつ、ログや Swagger のミドルウェアは含めない —
+// テスト出力のノイズになるだけなので。
 func NewRouter(db *gorm.DB) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Route("/api", func(r chi.Router) {
-		h := task.NewHandler(task.NewUseCase(db))
-		task.RegisterRoutes(r, h)
+		api.RegisterRoutes(r, db)
 	})
 
 	return r

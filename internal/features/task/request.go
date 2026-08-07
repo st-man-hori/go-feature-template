@@ -1,7 +1,10 @@
-// task パッケージは Task Feature そのもの: /api/tasks を提供するのに必要な
-// ものはすべてこのディレクトリに入っている。Laravel側の関心ごとに1ファイル
-// (Controller -> handler.go、Requests+Inputs -> request.go、
-// Resources -> response.go、UseCases -> usecase.go)という対応関係。
+// task パッケージは Task Feature そのもの: Controller/Request/UseCase/Resource
+// に相当するものはすべてこのディレクトリに入っている(Controller -> handler.go、
+// Requests+Inputs -> request.go、Resources -> response.go、
+// UseCases -> usecase.go)。ルーティングだけは internal/api/routes.go に
+// 一元管理している — Laravel版が Controller 等は app/Features/{Feature}/ に
+// 閉じ込めつつ、ルーティングとマイグレーションだけは意図的に一元管理して
+// いるのと同じ方針(詳しくは README の「Laravel 版との対応」参照)。
 // 新しい Feature を作るときはこのパッケージをコピーして出発点にし、最初の
 // 本物の Feature ができたら削除する — Laravel版の app/Features/Task/ と
 // まったく同じ使い方。
