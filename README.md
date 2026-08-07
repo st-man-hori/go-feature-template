@@ -1,6 +1,6 @@
 # Go Feature Template
 
-[laravel-feature-template](../laravel-feature-template) の Go 版です。Laravel を知っている人が Go を体系的に学ぶための比較対象として作られています。特定プロジェクトのビジネスロジックは含まれておらず、`Task` という汎用的なサンプル機能(CRUD)だけを同梱しています。新規プロジェクトを始めるときはこのリポジトリをベースに `internal/features/task` を消して自分たちの Feature を追加してください。
+[laravel-feature-template](../laravel-feature-template) の Go 版です。Go を体系的に学ぶため、自分が慣れているLaravelとの比較対象として作りました。特定プロジェクトのビジネスロジックは含まれておらず、`Task` という汎用的なサンプル機能(CRUD)だけを同梱しています。新規プロジェクトを始めるときはこのリポジトリをベースに `internal/features/task` を消して自分たちの Feature を追加してください。
 
 ## 思想
 
